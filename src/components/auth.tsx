@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 
 import { handleAuth, handleDeauth } from '../utils/google';
@@ -6,7 +6,7 @@ import { listCourses, listCourseCourseWorks } from '../utils/classroom';
 
 import { Button } from './ui/button';
 
-import { QuizAssignment } from './quiz-assignment';
+import { Courses } from './courses';
 
 export const Auth = () => {
   const { authenticated, login, logout } = useContext(AuthContext);
@@ -31,7 +31,6 @@ export const Auth = () => {
           <>
             <Button onClick={deauthenticate}>Logout</Button>
             <Button onClick={listCourses}>Get Courses</Button>
-            {/* You need to pass courseId! 👇🏻 */}
             <Button onClick={() => listCourseCourseWorks('665227818263')}>
               Get Course Works
             </Button>
@@ -41,9 +40,11 @@ export const Auth = () => {
         )}
       </div>
       {authenticated && (
-        <>
-          <QuizAssignment />
-        </>
+        <div className='flex justify-center items-center h-[50vh]'>
+          <Courses />
+          {/* Course Works / Quiz Assignments */}
+          {/* Course Work / Quiz Assignment */}
+        </div>
       )}
     </>
   );

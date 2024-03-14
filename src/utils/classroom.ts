@@ -5,6 +5,7 @@ export const listCourses = async () => {
     });
 
     console.log('Courses:', response.result.courses);
+    return _getCoursesId(response);
   } catch (error) {
     console.error('Error listing courses:', error);
   }
@@ -21,4 +22,24 @@ export const listCourseCourseWorks = async (courseId: string) => {
   } catch (error) {
     console.error('Error listing course works:', error);
   }
+};
+
+const _getCoursesId = (response) => {
+  return response.result.courses.map((course) => {
+    return {
+      courseId: course.id,
+      courseName: course.name,
+      courseDescription: course.description,
+    };
+  });
+};
+
+const _getCourseWorkId = (response) => {
+  return response.result.courseWork.map((courseWork) => {
+    return {
+      courseId: courseWork.courseId,
+      courseWorkId: courseWork.id,
+      courseWorkTitle: courseWork.title,
+    };
+  });
 };
