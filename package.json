@@ -29,6 +29,9 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@types/gapi": "^0.0.47",
+    "@types/gapi.client.classroom-v1": "^0.0.4",
+    "@types/google.accounts": "^0.0.14",
     "@types/node": "^20.11.20",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",

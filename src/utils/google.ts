@@ -6,10 +6,11 @@ const API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const DISCOVERY_DOC = `https://classroom.googleapis.com/$discovery/rest?version=v1&key=${API_KEY}`;
 const SCOPES =
   'https://www.googleapis.com/auth/classroom.courses https://www.googleapis.com/auth/classroom.coursework.me https://www.googleapis.com/auth/classroom.coursework.students';
-export let tokenClient;
+let tokenClient: google.accounts.oauth2.TokenClient;
 let gapiInitied = false;
 let gisInited = false;
-export let authenticated = false;
+
+let accessToken = '';
 
 export const initGapiClient = () => {
   gapi.client.init({
@@ -24,23 +25,23 @@ export const initGIS = () => {
   tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CLIENT_ID,
     scope: SCOPES,
-    callback: '', // defined later
+    callback: (tokenResponse: google.accounts.oauth2.TokenResponse) => {},
   });
   gisInited = true;
   console.log('gisInited', gisInited);
 };
 
-export const handleAuth = (callback) => {
-  tokenClient.callback = async (resp) => {
-    if (resp.error !== undefined) {
-      throw resp;
+export const handleAuth = (callback: () => void) => {
+  //@ts-ignore
+  tokenClient.callback = async (
+    tokenResponse: google.accounts.oauth2.TokenResponse
+  ) => {
+    if (tokenResponse.error !== undefined) {
+      throw tokenResponse;
     }
 
-    authenticated = true;
-
-    if (typeof callback === 'function') {
-      callback();
-    }
+    accessToken = tokenResponse.access_token;
+    callback();
   };
 
   if (gapi.client.getToken() === null) {
@@ -53,6 +54,19 @@ export const handleAuth = (callback) => {
   }
 };
 
-export const isAuthenticated = () => {
-  return authenticated;
+export const handleDeauth = async (callback: () => void) => {
+  const url = `https://oauth2.googleapis.com/revoke?token=${accessToken}`;
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to revoke access token');
+  }
+
+  callback();
 };

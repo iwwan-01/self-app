@@ -10,10 +10,10 @@ export const listCourses = async () => {
   }
 };
 
-export const listCourseCourseWorks = async (courseId: number) => {
+export const listCourseCourseWorks = async (courseId: string) => {
   try {
     const response = await gapi.client.classroom.courses.courseWork.list({
-      courseId: courseId,
+      courseId: courseId, // Course works belong to a course
       pageSize: 10,
     });
 

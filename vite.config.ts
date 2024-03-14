@@ -10,4 +10,10 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  // 👇🏻 This fixes the 'Cross-Origin-Opener-Policy' error, but breaks the tokenClient.callback function!
+  // server: {
+  //   headers: {
+  //     'Cross-Origin-Opener-Policy': 'same-origin; same-origin-allow-popups',
+  //   },
+  // },
 });
