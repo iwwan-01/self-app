@@ -1,7 +1,3 @@
-import { useState, useEffect } from 'react';
-
-import { listCourses, listCourseCourseWorks } from '../utils/classroom';
-
 import {
   Card,
   CardContent,
@@ -12,30 +8,13 @@ import {
 } from '@/components/ui/card';
 import { Button } from './ui/button';
 
-interface Course {
-  courseId: string;
-  courseName: string;
-  courseDescription: string;
-}
+// interface Course {
+//   courseId: string;
+//   courseName: string;
+//   courseDescription: string;
+// }
 
-export const Courses = () => {
-  const [courses, setCourses] = useState<Course[]>();
-  const [courseWorks, setCourseWorks] = useState();
-
-  useEffect(() => {
-    const getCourses = async () => {
-      let courses = await listCourses();
-      setCourses(courses);
-    };
-
-    getCourses();
-  }, []);
-
-  const getCourseWorks = async (courseId) => {
-    let courseWorks = await listCourseCourseWorks(courseId);
-    setCourseWorks(courseWorks);
-  };
-
+export const Courses = ({ courses, selectCourse }) => {
   return (
     <>
       {/* Courses Container */}
@@ -43,7 +22,7 @@ export const Courses = () => {
         {courses?.map((course) => {
           return (
             <div key={course.courseId}>
-              <Card className='w-[400px] h-[200px]'>
+              <Card className='w-[400px] h-[210px]'>
                 <CardHeader>
                   <CardTitle>{course.courseName}</CardTitle>
                   <CardDescription>{course.courseId}</CardDescription>
@@ -54,7 +33,12 @@ export const Courses = () => {
                     : 'This course has no description.'}
                 </CardContent>
                 <CardFooter className='space-x-4'>
-                  <Button className='w-full'>View Course</Button>
+                  <Button
+                    onClick={() => selectCourse(course.courseId)}
+                    className='w-full'
+                  >
+                    View Course
+                  </Button>
                 </CardFooter>
               </Card>
             </div>

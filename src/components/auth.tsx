@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 
 import { handleAuth, handleDeauth } from '../utils/google';
@@ -7,10 +7,23 @@ import { listCourses, listCourseCourseWorks } from '../utils/classroom';
 import { Button } from './ui/button';
 
 import { Courses } from './courses';
+import { CourseWorks } from './course-works';
 
 export const Auth = () => {
   const { authenticated, login, logout } = useContext(AuthContext);
 
+  const [courses, setCourses] = useState();
+  const [selectedCourse, setSelectedCourse] = useState();
+
+  const [courseWorks, setCourseWorks] = useState();
+
+  useEffect(() => {
+    if (authenticated) {
+      getCourses();
+    }
+  }, [authenticated]);
+
+  // Auth
   const authenticate = () => {
     handleAuth(() => {
       login();
@@ -23,15 +36,35 @@ export const Auth = () => {
     });
   };
 
+  // Courses
+  const getCourses = async () => {
+    const courses = await listCourses();
+    setCourses(courses);
+  };
+
+  const selectCourse = (courseId: string) => {
+    setSelectedCourse(courseId);
+    getCourseWorks(courseId);
+    console.log(courseId);
+  };
+
+  // Course Works
+  const getCourseWorks = async (courseId) => {
+    if (courseId) {
+      const courseWorks = await listCourseCourseWorks(courseId);
+      setCourseWorks(courseWorks);
+    }
+  };
+
   return (
     <>
       {/* Buttons Section */}
-      <div className='space-x-4'>
+      <div className='space-x-4 h-[100px]'>
         {authenticated ? (
           <>
             <Button onClick={deauthenticate}>Logout</Button>
-            <Button onClick={listCourses}>Get Courses</Button>
-            <Button onClick={() => listCourseCourseWorks('665227818263')}>
+            <Button onClick={getCourses}>Get Courses</Button>
+            <Button onClick={() => getCourseWorks(selectedCourse)}>
               Get Course Works
             </Button>
           </>
@@ -40,10 +73,11 @@ export const Auth = () => {
         )}
       </div>
       {authenticated && (
-        <div className='flex justify-center items-center h-[50vh]'>
-          <Courses />
-          {/* Course Works / Quiz Assignments */}
-          {/* Course Work / Quiz Assignment */}
+        <div className='flex flex-col justify-center items-center gap-y-10 h-full'>
+          {courses && <Courses courses={courses} selectCourse={selectCourse} />}
+          {selectedCourse && courseWorks && (
+            <CourseWorks courseWorks={courseWorks} />
+          )}
         </div>
       )}
     </>

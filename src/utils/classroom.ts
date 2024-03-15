@@ -19,11 +19,15 @@ export const listCourseCourseWorks = async (courseId: string) => {
     });
 
     console.log('Course Works:', response.result.courseWork);
+    if (response.result.courseWork) {
+      return _getCourseWorkId(response);
+    }
   } catch (error) {
     console.error('Error listing course works:', error);
   }
 };
 
+// Data Transformation
 const _getCoursesId = (response) => {
   return response.result.courses.map((course) => {
     return {
