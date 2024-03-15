@@ -2,12 +2,17 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/AuthContext';
 
 import { handleAuth, handleDeauth } from '../utils/google';
-import { listCourses, listCourseCourseWorks } from '../utils/classroom';
+import {
+  listCourses,
+  listCourseCourseWorks,
+  getCourseCourseWork,
+} from '../utils/classroom';
 
 import { Button } from './ui/button';
 
 import { Courses } from './courses';
 import { CourseWorks } from './course-works';
+import { QuizAssignment } from './quiz-assignment';
 
 export const Auth = () => {
   const { authenticated, login, logout } = useContext(AuthContext);
@@ -16,6 +21,7 @@ export const Auth = () => {
   const [selectedCourse, setSelectedCourse] = useState();
 
   const [courseWorks, setCourseWorks] = useState();
+  const [selectedCourseWork, setSelectedCourseWork] = useState();
 
   useEffect(() => {
     if (authenticated) {
@@ -23,7 +29,7 @@ export const Auth = () => {
     }
   }, [authenticated]);
 
-  // Auth
+  // Auth Methods
   const authenticate = () => {
     handleAuth(() => {
       login();
@@ -36,7 +42,7 @@ export const Auth = () => {
     });
   };
 
-  // Courses
+  // Courses Methods
   const getCourses = async () => {
     const courses = await listCourses();
     setCourses(courses);
@@ -45,15 +51,20 @@ export const Auth = () => {
   const selectCourse = (courseId: string) => {
     setSelectedCourse(courseId);
     getCourseWorks(courseId);
-    console.log(courseId);
   };
 
-  // Course Works
+  // Course Works Methods
   const getCourseWorks = async (courseId) => {
     if (courseId) {
       const courseWorks = await listCourseCourseWorks(courseId);
       setCourseWorks(courseWorks);
     }
+  };
+
+  const selectCourseWork = (courseWorkId) => {
+    setSelectedCourseWork(courseWorkId);
+    console.log(selectedCourse, courseWorkId);
+    getCourseCourseWork(selectedCourse, courseWorkId);
   };
 
   return (
@@ -67,6 +78,13 @@ export const Auth = () => {
             <Button onClick={() => getCourseWorks(selectedCourse)}>
               Get Course Works
             </Button>
+            <Button
+              onClick={() => {
+                getCourseCourseWork(selectedCourse, selectedCourseWork);
+              }}
+            >
+              Get Course Work
+            </Button>
           </>
         ) : (
           <Button onClick={authenticate}>Login</Button>
@@ -75,9 +93,13 @@ export const Auth = () => {
       {authenticated && (
         <div className='flex flex-col justify-center items-center gap-y-10 h-full'>
           {courses && <Courses courses={courses} selectCourse={selectCourse} />}
-          {selectedCourse && courseWorks && (
-            <CourseWorks courseWorks={courseWorks} />
+          {selectedCourse && (
+            <CourseWorks
+              courseWorks={courseWorks}
+              selectCourseWork={selectCourseWork}
+            />
           )}
+          {selectedCourseWork && <QuizAssignment />}
         </div>
       )}
     </>

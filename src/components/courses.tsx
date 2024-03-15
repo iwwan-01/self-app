@@ -8,12 +8,6 @@ import {
 } from '@/components/ui/card';
 import { Button } from './ui/button';
 
-// interface Course {
-//   courseId: string;
-//   courseName: string;
-//   courseDescription: string;
-// }
-
 export const Courses = ({ courses, selectCourse }) => {
   return (
     <>

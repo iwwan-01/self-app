@@ -27,6 +27,19 @@ export const listCourseCourseWorks = async (courseId: string) => {
   }
 };
 
+export const getCourseCourseWork = async (courseId, courseWorkId) => {
+  try {
+    const response = await gapi.client.classroom.courses.courseWork.get({
+      courseId: courseId,
+      id: courseWorkId,
+    });
+
+    console.log('Course Work:', response.result);
+  } catch (error) {
+    console.error('Error getting course work:', error);
+  }
+};
+
 // Data Transformation
 const _getCoursesId = (response) => {
   return response.result.courses.map((course) => {

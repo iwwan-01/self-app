@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import {
   Card,
   CardContent,
@@ -9,11 +7,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from './ui/button';
-import { QuizAssignment } from './quiz-assignment';
 
-export const CourseWorks = ({ courseWorks }) => {
-  const [selectedCourseWork, setSelectedCourseWork] = useState();
-
+export const CourseWorks = ({ courseWorks, selectCourseWork }) => {
   return (
     <>
       {/* Course Works Container */}
@@ -32,7 +27,7 @@ export const CourseWorks = ({ courseWorks }) => {
                 </CardContent>
                 <CardFooter>
                   <Button
-                    onClick={() => setSelectedCourseWork(true)}
+                    onClick={() => selectCourseWork(courseWork.courseWorkId)}
                     className='w-full'
                   >
                     View Course Work
@@ -43,7 +38,6 @@ export const CourseWorks = ({ courseWorks }) => {
           );
         })}
       </div>
-      {selectedCourseWork && <QuizAssignment />}
     </>
   );
 };
